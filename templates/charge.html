@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Conekta Charge</title>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script type="text/javascript" src="https://conektaapi.s3.amazonaws.com/v0.3.2/js/conekta.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/simpleui/0.1.1/simple.min.css" media="screen" charset="utf-8">
+    <style media="screen">
+      .text-center  { text-align: center; }
+      .padding-up { margin: 5% 0; }
+      .exp { max-width: 33%; }
+      .button { width: 80%; height: 80px; }
+    </style>
+  </head>
+  <body>
+    <main class="container">
+      <h1 class="text-center padding-up">Hello, beauty. You're at the conekta index.</h1>
+      <form action="" method="POST" id="card-form" class="text-center">
+        {% csrf_token %}
+        <span class="card-errors"></span>
+        <div class="grid">
+          <div class="field cell-6">
+            <label class="label">Nombre del tarjetahabiente</label>
+            <input type="text" size="20" data-conekta="card[name]" class="input"/>
+          </div>
+          <div class="field cell-6">
+            <label class="label">Número de tarjeta de crédito</label>
+            <input type="text" size="20" data-conekta="card[number]" class="input"/>
+          </div>
+        </div>
+        <div class="grid">
+          <div class="field cell-8">
+            <label class="label">Fecha de expiración (MM/AAAA)</label>
+            <div class="grid">
+              <input type="text" size="2" data-conekta="card[exp_month]" class="input cell-4 exp"/>
+              <span class="cell-4 exp">/</span>
+              <input type="text" size="4" data-conekta="card[exp_year]" class="input cell-4 exp"/>
+            </div>
+          </div>
+          <div class="field cell-4">
+            <label class="label">CVC</label>
+            <input type="password" size="4" data-conekta="card[cvc]" class="input"/>
+          </div>
+        </div>
+        <div class="grid">
+          <div class="field cell-4">
+            <label class="label">Calle</label>
+            <input type="text" size="25" data-conekta="card[address][street1]" class="input"/>
+          </div>
+          <div class="field cell-4">
+            <label class="label">Colonia</label>
+            <input type="text" size="25" data-conekta="card[address][street2]" class="input"/>
+          </div>
+          <div class="field cell-4">
+            <label class="label">Ciudad</label>
+            <input type="text" size="25" data-conekta="card[address][city]" class="input"/>
+          </div>
+        </div>
+        <div class="grid">
+          <div class="field cell-4">
+            <label class="label">Estado</label>
+            <input type="text" size="25" data-conekta="card[address][state]" class="input"/>
+          </div>
+          <div class="field cell-4">
+            <label class="label">CP</label>
+            <input type="text" size="5" data-conekta="card[address][zip]" class="input"/>
+          </div>
+          <div class="field cell-4">
+            <label class="label">País</label>
+            <input type="text" size="25" data-conekta="card[address][country]" class="input"/>
+          </div>
+        </div>
+        <button type="submit" class="button">Charge me, babe!</button>
+      </form>
+    </main>
+    <script type="text/javascript">
+      Conekta.setPublishableKey('key_KJysdbf6PotS2ut2');
+      $(function () {
+        $("#card-form").submit(function(event) {
+          var $form = $(this);
+          $form.find("button").prop("disabled", true); //Prevents double click
+          Conekta.token.create($form, conektaSuccessResponseHandler, conektaErrorResponseHandler);
+          return false;
+        });
+      });
+      var conektaSuccessResponseHandler = function(token) {
+        var $form = $("#card-form");
+        $form.append($("<input type='hidden' name='conektaTokenId'>").val(token.id)); //Add hidden input with token_id
+        console.log(token.id);
+        $form.get(0).submit();
+      };
+      var conektaErrorResponseHandler = function(response) {
+        var $form = $("#card-form");
+        $form.find(".card-errors").text(response.message_to_purchaser); //Display the error
+        $form.find("button").prop("disabled", false);
+      };
+    </script>
+  </body>
+</html>

@@ -49,4 +49,4 @@ class Sale(models.Model):
             })
             return json.dumps(charge.__dict__)
         except conekta.ConektaError as e:
-            return e.message
+            return e.error_json['message']

@@ -42,9 +42,8 @@ INSTALLED_APPS = [
     'conekta'
 ]
 
-# Conekta API Keys
+# Conekta private API Key
 CONEKTA_PRIVATE_KEY = 'key_eYvWV7gSDkNYXsmr'
-CONEKTA_PUBLIC_KEY = 'key_KJysdbf6PotS2ut2'
 
 
 MIDDLEWARE_CLASSES = [
@@ -63,7 +62,7 @@ ROOT_URLCONF = 'conekta_django.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ["templates"],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

@@ -1,13 +1,17 @@
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, render
 from django.http import HttpResponse
-from django.template import RequestContext
+from django.views.decorators.csrf import csrf_protect
+
 
 from sales.models import Sale
+from django.conf import settings
 
+@csrf_protect
 def index(request):
-    return HttpResponse("Hello, beauty. You're at the conekta index.")
-
-def charge(request):
-    token_id = 'tok_test_visa_4242'
-    sale = Sale()
-    return HttpResponse(sale.charge(300, token_id))
+    if request.method == 'GET':
+        return render(request, 'charge.html')
+    else:
+        token_id = request.POST["conektaTokenId"]
+        sale = Sale()
+        if token_id: #Prevents send empty token
+            return HttpResponse(sale.charge(300, token_id))
